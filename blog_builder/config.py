@@ -12,7 +12,7 @@ POSTS_PER_PAGE = 8
 
 SITE_TITLE = "Wens'Blog"
 SITE_DESCRIPTION = "Wens 的个人博客，记录核能、机器学习、编程与日常思考。"
-SITE_BASE_URL = "https://reveryday.github.io/"
+SITE_BASE_URL = "https://wens-wu.github.io/"
 SITE_AUTHOR = "Wens"
 HEAD_EXTRAS = """
     <link
