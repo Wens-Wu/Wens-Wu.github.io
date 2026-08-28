@@ -1,0 +1,139 @@
+from __future__ import annotations
+
+import shutil
+from math import ceil
+from pathlib import Path
+
+from .config import OUTPUT_DIR, POSTS_PER_PAGE, ROOT
+from .content import load_posts
+from .templates import (
+    render_archive,
+    render_collection_page,
+    render_faq_page,
+    render_feed_atom,
+    render_friends_page,
+    render_home,
+    render_playground_page,
+    render_post_page,
+    render_robots_txt,
+    render_search_index,
+    render_search_page,
+    render_sitemap,
+    render_tags,
+    render_tracker_page,
+)
+
+
+def write_text(path: Path, content: str) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(content, encoding="utf-8", newline="\n")
+
+
+def copy_static_assets(source_dir: Path, target_dir: Path) -> None:
+    for source_path in source_dir.rglob("*"):
+        if source_path.is_dir():
+            continue
+        relative = source_path.relative_to(source_dir)
+        destination = target_dir / relative
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(source_path, destination)
+
+
+def remove_path(path: Path) -> None:
+    try:
+        if path.is_dir():
+            shutil.rmtree(path)
+        else:
+            path.unlink()
+    except FileNotFoundError:
+        return
+    except PermissionError:
+        print(f"Warning: could not remove stale build artifact: {path}")
+
+
+def prune_empty_directories(root: Path) -> None:
+    if not root.exists():
+        return
+    directories = sorted(
+        (path for path in root.rglob("*") if path.is_dir()),
+        key=lambda path: len(path.parts),
+        reverse=True,
+    )
+    for path in directories:
+        try:
+            path.rmdir()
+        except OSError:
+            continue
+
+
+def prune_stale_posts(posts_dir: Path, current_slugs: set[str]) -> None:
+    if not posts_dir.exists():
+        return
+    for path in posts_dir.glob("*.html"):
+        if path.stem not in current_slugs:
+            remove_path(path)
+
+
+def prune_stale_home_pages(output_dir: Path, total_pages: int) -> None:
+    """Remove paginated home pages (page2.html, ...) left over from a larger post count."""
+    valid = {f"page{number}.html" for number in range(2, total_pages + 1)}
+    for path in output_dir.glob("page*.html"):
+        if path.name not in valid:
+            remove_path(path)
+
+
+def prune_stale_assets(source_dir: Path, target_dir: Path) -> None:
+    if not target_dir.exists():
+        return
+    expected_files = {
+        path.relative_to(source_dir)
+        for path in source_dir.rglob("*")
+        if path.is_file()
+    }
+    expected_files.add(Path("search.js"))
+
+    for path in sorted(
+        (path for path in target_dir.rglob("*") if path.is_file()),
+        key=lambda path: len(path.parts),
+        reverse=True,
+    ):
+        if path.relative_to(target_dir) not in expected_files:
+            remove_path(path)
+
+    prune_empty_directories(target_dir)
+
+
+def main() -> None:
+    posts = load_posts()
+
+    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    prune_stale_posts(OUTPUT_DIR / "posts", {post.slug for post in posts})
+    prune_stale_assets(ROOT / "assets", OUTPUT_DIR / "assets")
+    copy_static_assets(ROOT / "assets", OUTPUT_DIR / "assets")
+
+    total_pages = max(1, ceil(len(posts) / POSTS_PER_PAGE))
+    prune_stale_home_pages(OUTPUT_DIR, total_pages)
+    for page in range(1, total_pages + 1):
+        start = (page - 1) * POSTS_PER_PAGE
+        page_posts = posts[start : start + POSTS_PER_PAGE]
+        page_html = render_home(
+            page_posts, page=page, total_pages=total_pages, start_index=start + 1
+        )
+        target = "index.html" if page == 1 else f"page{page}.html"
+        write_text(OUTPUT_DIR / target, page_html)
+
+    write_text(OUTPUT_DIR / "archive.html", render_archive(posts))
+    write_text(OUTPUT_DIR / "tags.html", render_tags(posts))
+    write_text(OUTPUT_DIR / "search.html", render_search_page())
+    write_text(OUTPUT_DIR / "playground.html", render_playground_page())
+    write_text(OUTPUT_DIR / "tracker.html", render_tracker_page())
+    write_text(OUTPUT_DIR / "faq.html", render_faq_page())
+    write_text(OUTPUT_DIR / "friends.html", render_friends_page())
+    write_text(OUTPUT_DIR / "collection.html", render_collection_page())
+    write_text(OUTPUT_DIR / "assets" / "search.js", render_search_index(posts))
+    write_text(OUTPUT_DIR / "sitemap.xml", render_sitemap(posts))
+    write_text(OUTPUT_DIR / "robots.txt", render_robots_txt())
+    write_text(OUTPUT_DIR / "feed.xml", render_feed_atom(posts))
+
+    for post in posts:
+        write_text(OUTPUT_DIR / "posts" / f"{post.slug}.html", render_post_page(post))
