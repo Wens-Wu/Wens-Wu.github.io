@@ -24,8 +24,30 @@ App
   winget install --id Git.Git -e --source winget
   ```
 
-- Git
+- Git（安装+配置）
 
   ```shell
   winget install --id Git.Git -e --source winget
   ```
+
+- WSL
+
+- 基于历史的指令预测：
+
+  ```shell
+  Set-PSReadLineOption -PredictionSource History
+  ```
+
+
+
+### Linux子系统
+
+环境配置：
+
+- CMake
+- 
+
+
+
+
+
