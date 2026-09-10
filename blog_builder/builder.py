@@ -11,7 +11,6 @@ from .templates import (
     render_collection_page,
     render_faq_page,
     render_feed_atom,
-    render_friends_page,
     render_home,
     render_playground_page,
     render_post_page,
@@ -128,7 +127,6 @@ def main() -> None:
     write_text(OUTPUT_DIR / "playground.html", render_playground_page())
     write_text(OUTPUT_DIR / "tracker.html", render_tracker_page())
     write_text(OUTPUT_DIR / "faq.html", render_faq_page())
-    write_text(OUTPUT_DIR / "friends.html", render_friends_page())
     write_text(OUTPUT_DIR / "collection.html", render_collection_page())
     write_text(OUTPUT_DIR / "assets" / "search.js", render_search_index(posts))
     write_text(OUTPUT_DIR / "sitemap.xml", render_sitemap(posts))

@@ -26,7 +26,6 @@ _ICONS = {
     "arrow-up": '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5m-6 6 6-6 6 6"/></svg>',
     "arrow-left": '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>',
     "arrow-right": '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>',
-    "external-link": '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 5h5v5m0-5-8 8"/><path d="M18 13v5a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg>',
     "moon": '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 15.2A8.5 8.5 0 0 1 8.8 4a8.5 8.5 0 1 0 11.2 11.2Z"/></svg>',
     "play": '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 7 8 5-8 5Z"/></svg>',
     "search": '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.3"/><path d="m15.5 15.5 4 4"/></svg>',
@@ -376,36 +375,6 @@ def render_collection_page() -> str:
     return render_layout(f"收藏 | {SITE_TITLE}", content, page_url="collection.html")
 
 
-def render_friends_page() -> str:
-    content = f"""{render_page_header("friends.html")}
-
-      <main class="content-page friends-page">
-        <section class="friends-intro">
-          <h2>值得一读</h2>
-        </section>
-
-        <div class="friend-grid">
-          <a class="friend-card" href="https://wens-wu.github.io/index.html" target="_blank" rel="noreferrer">
-            <span class="friend-mark" aria-hidden="true">W</span>
-            <span class="friend-body">
-              <span class="friend-name">Wens' Blog</span>
-              <span class="friend-note">我的另一个博客</span>
-            </span>
-            <span class="friend-arrow">{_icon("external-link")}</span>
-          </a>
-          <a class="friend-card" href="https://r0otsu.github.io/" target="_blank" rel="noreferrer">
-            <span class="friend-mark" aria-hidden="true">R</span>
-            <span class="friend-body">
-              <span class="friend-name">r0otsu</span>
-              <span class="friend-note">放一些无聊的东西.</span>
-            </span>
-            <span class="friend-arrow">{_icon("external-link")}</span>
-          </a>
-        </div>
-      </main>"""
-    return render_layout(f"友链 | {SITE_TITLE}", content, page_url="friends.html")
-
-
 def render_tracker_page() -> str:
     content = f"""{render_page_header("tracker.html", "工作记录")}
 
@@ -664,7 +633,6 @@ _STATIC_SITEMAP_PAGES = [
     ("playground.html", "monthly"),
     ("tracker.html", "weekly"),
     ("faq.html", "yearly"),
-    ("friends.html", "yearly"),
     ("collection.html", "weekly"),
 ]
 

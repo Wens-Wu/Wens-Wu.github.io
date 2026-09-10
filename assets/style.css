@@ -695,80 +695,6 @@ a.tag-chip:hover {
   color: var(--accent);
 }
 
-.friends-page {
-  padding-top: 0.7rem;
-}
-
-.friends-intro {
-  padding: 1rem 0 1.4rem;
-  border-bottom: 1px solid var(--border);
-  background: transparent;
-}
-
-.friends-intro h2 {
-  margin: 0.15rem 0 0.45rem;
-  font-size: clamp(1.45rem, 2.5vw, 2rem);
-  line-height: 1.2;
-  font-weight: 650;
-}
-
-.friend-grid {
-  display: grid;
-  gap: 0.8rem;
-  margin-top: 1.2rem;
-}
-
-.friend-card {
-  display: grid;
-  grid-template-columns: 2.6rem minmax(0, 1fr) auto;
-  gap: 0.85rem;
-  align-items: center;
-  padding: 0.95rem;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  background: var(--paper);
-  text-decoration: none;
-  transition: border-color 160ms ease, transform 160ms ease;
-}
-
-.friend-card:hover {
-  border-color: var(--accent);
-  background: var(--surface-hover);
-}
-
-.friend-mark {
-  display: grid;
-  width: 2.6rem;
-  height: 2.6rem;
-  place-items: center;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  background: var(--accent-soft);
-  color: var(--accent);
-  font-weight: 700;
-}
-
-.friend-body {
-  display: grid;
-  min-width: 0;
-  gap: 0.08rem;
-}
-
-.friend-name {
-  font-weight: 650;
-}
-
-.friend-note {
-  color: var(--muted);
-  font-size: 0.9rem;
-}
-
-.friend-arrow {
-  display: inline-flex;
-  align-items: center;
-  color: var(--muted);
-}
-
 .tracker-page {
   max-width: 860px;
 }
@@ -1419,14 +1345,6 @@ mark {
     font-size: 1.8rem;
   }
 
-  .friend-card {
-    grid-template-columns: 2.4rem minmax(0, 1fr);
-  }
-
-  .friend-arrow {
-    display: none;
-  }
-
   .tracker-summary {
     grid-template-columns: 1fr;
   }
@@ -1551,8 +1469,6 @@ mark {
   html.theme-transition body,
   html.theme-transition .site-header,
   html.theme-transition .post-card,
-  html.theme-transition .friend-card,
-  html.theme-transition .friend-mark,
   html.theme-transition .search-panel,
   html.theme-transition .article-toc,
   html.theme-transition .chart-tabs,
