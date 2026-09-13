@@ -6,19 +6,22 @@ tags:
 
 App
 
-- Typora
-- 福昕阅读器
+- Typora（Markdown编辑器）
+- 福昕阅读器（pdf阅读器）
 - Edge/Chrome
 - WorkBuddy
+- ChatGPT
 - Docker Desktop	
 - KDE Connect
 - 坚果云
-- Oppo互联
+- 肥猫云
+- Office/WPS Office
+- 腾讯会议
 - 微信开发者工具
 
 环境配置：
 
-- python
+- python安装
 
   ```shell
   winget install --id Git.Git -e --source winget
@@ -30,23 +33,17 @@ App
   winget install --id Git.Git -e --source winget
   ```
 
-- WSL
+- WSL安装
+
+- Conda
+
+Powershell：
 
 - 基于历史的指令预测：
 
   ```shell
   Set-PSReadLineOption -PredictionSource History
   ```
-
-
-
-### Linux子系统
-
-环境配置：
-
-- CMake
-
-
 
 
 
