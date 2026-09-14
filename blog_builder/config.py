@@ -44,6 +44,42 @@ FOOTER_SCRIPTS = """
     <script>
       document.addEventListener("DOMContentLoaded", () => {
         if (window.hljs) {
+          // Extend Bash without changing its built-in grammar or auto-detection.
+          const bash = hljs.getLanguage("bash");
+          hljs.registerLanguage("blog-bash", () => hljs.inherit(bash, {
+            aliases: [],
+            disableAutodetect: true,
+            keywords: Object.assign({}, bash.keywords, {
+              built_in: [].concat(bash.keywords.built_in, [
+                "git", "curl", "wget", "ssh", "scp", "rsync", "grep", "rg",
+                "find", "sed", "awk", "tar", "zip", "unzip", "make", "cmake",
+                "python", "python3", "pip", "pip3", "node", "npm", "npx",
+                "pnpm", "yarn", "docker", "kubectl", "brew"
+              ])
+            }),
+            contains: bash.contains.concat([
+              {
+                match: [/\\bgit/, /\\s+/, /(?:add|bisect|blame|branch|checkout|cherry-pick|clean|clone|commit|config|describe|diff|fetch|init|log|merge|mv|notes|pull|push|range-diff|rebase|reflog|remote|reset|restore|revert|rm|shortlog|show|stash|status|submodule|switch|tag|worktree)\\b/],
+                scope: { 1: "built_in", 3: "keyword" },
+                relevance: 0
+              },
+              {
+                match: /(?<![\\w./-])--?[a-zA-Z][\\w-]*/,
+                scope: "attr",
+                relevance: 0
+              }
+            ])
+          }));
+          document.querySelectorAll("pre code").forEach((block) => {
+            const language = Array.from(block.classList).find((name) =>
+              /^language-(shell|bash|sh|zsh)$/i.test(name)
+            );
+            if (!language) return;
+            // A shell session needs its prompt/output grammar; bare commands do not.
+            const hasPrompt = /^ {0,3}(?:[$>]|[\\/~\\w[\\]()@.-]+[>%$#]) +/m.test(block.textContent);
+            if (language.toLowerCase() === "language-shell" && hasPrompt) return;
+            block.classList.replace(language, "language-blog-bash");
+          });
           window.hljs.highlightAll();
         }
       });
