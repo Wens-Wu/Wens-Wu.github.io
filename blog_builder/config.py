@@ -249,7 +249,7 @@ FOOTER_SCRIPTS = """
       })();
     </script>
 """
-HOME_HEADING = "Welocom."
+HOME_HEADING = "Welcome"
 NAV_LINKS = [
     ("首页", "index.html"),
     ("归档", "archive.html"),

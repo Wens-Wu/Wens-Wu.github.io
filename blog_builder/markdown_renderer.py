@@ -37,7 +37,7 @@ def normalize_image_html(source: str, alt: str = "", style: str = "") -> str:
         ).strip()
 
     style_attr = f' style="{escape(normalized_style, quote=True)}"' if normalized_style else ""
-    caption = f"<figcaption>{escape(alt)}</figcaption>"
+    caption = f"<figcaption>{escape(alt)}</figcaption>" if alt.strip() else ""
     return (
         f'<figure class="prose-figure"><img src="{escape(source, quote=True)}" '
         f'alt="{escape(alt, quote=True)}" loading="lazy"{style_attr} />{caption}</figure>'
@@ -60,6 +60,59 @@ def parse_image_attributes(raw: str) -> str:
         if key in {"width", "height", "max-width"} and value:
             styles.append(f"{key}: {value};")
     return " ".join(styles)
+
+
+def split_table_row(line: str) -> list[str]:
+    row = line.strip()
+    if row.startswith("|"):
+        row = row[1:]
+    if row.endswith("|") and not row.endswith("\\|"):
+        row = row[:-1]
+    cells: list[str] = []
+    current: list[str] = []
+    escaped = False
+    for char in row:
+        if char == "|" and not escaped:
+            cells.append("".join(current).strip())
+            current = []
+        else:
+            current.append(char)
+        escaped = char == "\\" and not escaped
+        if char != "\\":
+            escaped = False
+    cells.append("".join(current).strip())
+    return cells
+
+
+def render_table(header_line: str, separator_line: str, body_lines: list[str]) -> str:
+    headers = split_table_row(header_line)
+    separators = split_table_row(separator_line)
+    alignments: list[str] = []
+    for cell in separators[:len(headers)]:
+        value = cell.strip()
+        alignments.append(
+            "center" if value.startswith(":") and value.endswith(":")
+            else "left" if value.startswith(":")
+            else "right" if value.endswith(":") else ""
+        )
+    alignments.extend([""] * (len(headers) - len(alignments)))
+
+    def render_cell(cell: str, tag: str, index: int) -> str:
+        align = f' style="text-align: {alignments[index]}"' if alignments[index] else ""
+        return f"<{tag}{align}>{render_inline(cell)}</{tag}>"
+
+    html = ["<div class=\"prose-table-wrapper\"><table><thead><tr>"]
+    html.append("".join(render_cell(cell, "th", index) for index, cell in enumerate(headers)))
+    html.append("</tr></thead>")
+    if body_lines:
+        html.append("<tbody>")
+        for line in body_lines:
+            cells = split_table_row(line)
+            cells.extend([""] * (len(headers) - len(cells)))
+            html.append("<tr>" + "".join(render_cell(cell, "td", index) for index, cell in enumerate(cells[:len(headers)])) + "</tr>")
+        html.append("</tbody>")
+    html.append("</table></div>")
+    return "".join(html)
 
 
 def render_inline(text: str) -> str:
@@ -278,6 +331,24 @@ def _markdown_to_html(markdown: str, heading_state: HeadingState | None = None) 
             flush_paragraph()
             in_display_math = True
             i += 1
+            continue
+
+        if (
+            i + 1 < len(lines)
+            and "|" in line
+            and "|" in lines[i + 1]
+            and len(split_table_row(line)) >= 2
+            and all(re.fullmatch(r":?-{3,}:?", cell) for cell in split_table_row(lines[i + 1]))
+        ):
+            flush_paragraph()
+            flush_list()
+            header_line, separator_line = line, lines[i + 1]
+            i += 2
+            table_body: list[str] = []
+            while i < len(lines) and lines[i].strip() and "|" in lines[i]:
+                table_body.append(lines[i])
+                i += 1
+            blocks.append(render_table(header_line, separator_line, table_body))
             continue
 
         if not stripped:
