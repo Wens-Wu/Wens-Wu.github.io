@@ -98,7 +98,11 @@ def parse_sticky(value: str) -> int:
 def load_posts() -> list[Post]:
     posts: list[Post] = []
     for path in sorted(POSTS_DIR.glob("*.md")):
-        metadata, body = parse_frontmatter(path.read_text(encoding="utf-8"))
+        source = path.read_text(encoding="utf-8")
+        # Empty files are convenient placeholders for drafts and are not posts.
+        if not source.strip():
+            continue
+        metadata, body = parse_frontmatter(source)
         if metadata.get("published", "").lower() == "false":
             continue
         slug = metadata.get("slug", "").strip() or slugify(path)
