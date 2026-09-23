@@ -38,7 +38,7 @@ git config -e --global   # 针对系统上所有仓库
 
 ### Git工作流程
 
-![img](https://gitee.com/wenswuu/pictures/raw/master/git-command.webp)
+![](https://gitee.com/wenswuu/pictures/raw/master/git-command.webp)
 
 Git的工作流程主要分为四个主要部分：
 
