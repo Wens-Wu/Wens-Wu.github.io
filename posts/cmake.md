@@ -183,7 +183,7 @@ CMake 支持多种构建系统生成器，如 Unix Makefiles、Ninja、Visual St
 
 基本用法——生成默认构建文件：
 
-```cmake
+```shell
 # .. 指向包含 CMakeLists.txt 的源代码目录
 cmake ..
 ```
@@ -192,14 +192,14 @@ cmake ..
 
 使用 `-G` 参数可以指定要生成的构建系统类型。
 
-```cmake
+```shell
 # 使用 Ninja 作为构建系统（速度比 Make 更快）
 cmake -G "Ninja" ..
 ```
 
 指定构建类型：使用 `-DCMAKE_BUILD_TYPE` 参数设置编译优化级别和调试信息。
 
-```cmake
+```shell
 # 四种常见的构建类型：Debug / Release / RelWithDebInfo / MinSizeRel
 cmake -DCMAKE_BUILD_TYPE=Release ..
 ```
@@ -210,21 +210,21 @@ cmake -DCMAKE_BUILD_TYPE=Release ..
 
 推荐方式——使用 CMake 通用构建命令：
 
-```cmake
+```shell
 # 无论底层使用哪种构建系统，该命令都能正确编译
 cmake --build .
 ```
 
 构建特定目标：
 
-```cmake
+```shell
 # 只编译指定的目标（如某个可执行文件或库）
 cmake --build . --target MyExecutable
 ```
 
 使用 Makefile 构建系统：
 
-```cmake
+```shell
 # 编译所有目标
 make
 
@@ -237,7 +237,7 @@ make MyExecutable
 
 使用 Ninja 构建系统：
 
-```cmake
+```shell
 # Ninja 自动并行编译，无需手动指定 -j
 ninja
 
@@ -249,7 +249,7 @@ ninja MyExecutable
 
 如果生成了 Visual Studio 工程文件，可以打开 `.sln` 解决方案文件，在 IDE 中选择生成解决方案。
 
-```cmake
+```shell
 # 也可以使用 MSBuild 命令行工具编译
 msbuild MyProject.sln /p:Configuration=Release
 ```
